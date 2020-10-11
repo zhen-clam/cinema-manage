@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.dao.RechargeDao">
+
+    <sql id="Recharge">userId,name,money,time</sql>
+    <select id="selectList" parameterType="com.example.demo.model.Recharge" resultType="com.example.demo.model.Recharge">
+        select * from recharge
+        <where>
+            <if test="name!=null" >
+                AND name like concat('%',concat(#{name}),'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertRecharge" parameterType="com.example.demo.model.Recharge" keyProperty="id" useGeneratedKeys="true">
+        insert into recharge (<include refid="Recharge" />) values (#{userId},#{name},#{money},#{time})
+    </insert>
+
+    <delete id="deleteRecharge" parameterType="Long">
+        delete  from  recharge where id in
+        <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

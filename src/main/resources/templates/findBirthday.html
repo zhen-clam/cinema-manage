@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>生日查询</title>
+    <link rel="stylesheet" type="text/css" href="../static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../static/easyui/themes/icon.css">
+
+    <script type="text/javascript" src="../static/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../static/js/include.js"></script>
+    <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+
+<form id="ff" name="ff" method="post">
+    <div style="margin-bottom:10px">
+        <input type="hidden" name="uid" id="uid"
+               style="width: 160px" data-options="label:'卡号',required:false">
+        <input class="easyui-textbox" name="name" id="name"
+               style=" width: 200px"  data-options="label:'姓名',required:false">
+        <select  class="easyui-combobox" name="searchFuture" id="searchFuture" panelMaxHeight="64px"
+                 style=" width: 200px"  data-options="label:'选择日期',required:true, textField:'text',valueField:'future',editable:false ">
+            <option value="">不选择</option>
+            <option>未来三天</option>
+            <option>未来一周</option>
+        </select>
+    </div>
+</form>
+
+<div id="tb">
+    <a href="#" class="easyui-linkbutton"
+       iconCls="icon-search" plian="true" onclick="queryStudent()">姓名查询</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="#" class="easyui-linkbutton"
+       iconCls="icon-search" plian="true" onclick="searchFuture()">生日查询</a>
+</div>
+
+<table class="easyui-datagrid" id="dg" name="dg" style="height: auto">
+    <thead>
+    <th field="ck" checkbox="true" ></th>
+    <th field="cid" width="25%" align="center">卡号</th>
+    <th field="name" width="25%" align="center">姓名</th>
+    <th field="phone" width="25%" align="center">电话</th>
+    <th field="birthday" width="24%" align="center">生日</th>
+    </thead>
+</table>
+
+</body>
+<script type="text/javascript">
+    var grid;
+    $(document).ready(function () {
+        grid=$('#dg').datagrid({
+            url:'http://localhost:8080/birth/selectAll',
+            rownumbers:true,
+            striped:true,
+//            fit:true,
+            toolbar:'#tb',
+//          singleSelect:true //单选模式
+            pagination:true,
+            pageSize:2,
+            pageList:[1,2,3,4]
+        });
+    });
+
+    function queryStudent(){
+        $('#dg').datagrid('load',{
+            name:$('#name').val()
+        });
+    }
+
+    function searchFuture(){
+        $('#dg').datagrid('load',{
+            // name:$('#name').val(),
+            searchFuture:$('#searchFuture').combobox('getValue')
+        });
+    }
+
+</script>
+
+</html>

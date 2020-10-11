@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>积分兑换</title>
+    <link rel="stylesheet" type="text/css" href="../static/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../static/easyui/themes/icon.css">
+
+    <script type="text/javascript" src="../static/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../static/js/include.js"></script>
+    <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body>
+
+<form id="ff" name="ff" method="post">
+    <div style="margin-bottom:10px">
+        <input type="hidden" name="id" id="id"
+               style="width: 160px" data-options="label:'卡号',required:false">
+        <input class="easyui-textbox" name="name" id="name"
+               style=" width: 200px"  data-options="label:'姓名',required:false">
+        <input class="easyui-numberbox" name="integral" id="integral"
+               style=" width: 200px"  data-options="label:'所需积分',required:false,precision:0,min:0">
+        </select>
+    </div>
+</form>
+
+<div id="tb">
+    <a href="#" class="easyui-linkbutton"
+       iconCls="icon-search" plian="true" onclick="queryCard()">查询</a>
+    <a href="#" class="easyui-linkbutton"
+       iconCls="icon-ok" plian="true" onclick="saveCon()">兑换</a>
+    <a href="#" class="easyui-linkbutton"
+       iconCls="icon-edit" plain="true" onclick="ch1()">消耗10积分兑换1号物品</a>
+    <a href="#" class="easyui-linkbutton"
+       iconCls="icon-edit" plain="true" onclick="ch2()">消耗20积分兑换2号物品</a>
+    <a href="#" class="easyui-linkbutton"
+       iconCls="icon-edit" plain="true" onclick="ch3()">消耗30积分兑换3号物品</a>
+</div>
+
+<table class="easyui-datagrid" id="dg" name="dg" style="height: auto">
+    <thead>
+    <th field="ck" checkbox="true" ></th>
+    <th field="id" width="33%" align="center">卡号</th>
+    <th field="name" width="33%" align="center">姓名</th>
+    <th field="integral" width="33%" align="center">积分</th>
+    </thead>
+</table>
+
+
+</body>
+
+<script type="text/javascript">
+    let grid;
+
+    $(document).ready(function () {
+            grid = $('#dg').datagrid({
+                    url: 'http://localhost:8080/vipUser/selectAll',
+                    rownumbers: true,
+                    striped: true,
+            //        fit: true,
+                    toolbar: '#tb',
+                    pagination:true,
+                    pageSize:2,
+                    pageList:[1,2,3,4]
+                }
+            )
+        }
+    );
+
+
+    function queryCard(){
+        let row =$('#ff').serializeArray();
+        $('#dg').datagrid('load',{
+            name:$('#name').val()
+        });
+
+    }
+    function ch1(){
+        let row=$('#dg').datagrid("getSelected");
+        $('#ff').form('load',{
+            id: row.id,
+            name:row.name,
+            integral:10
+        });
+    }
+
+    function ch2(){
+        let row=$('#dg').datagrid("getSelected");
+        $('#ff').form('load',{
+            id: row.id,
+            name:row.name,
+            integral:20
+        });
+    }
+    function ch3(){
+        let row=$('#dg').datagrid("getSelected");
+        $('#ff').form('load',{
+            id: row.id,
+            name:row.name,
+            integral:30
+        });
+    }
+
+
+    function saveCon(){
+        let data=$('#ff').serializeArray();
+        alert(JSON.stringify(data));
+        $.ajax({
+            url:'http://localhost:8080/vipUser/integralCon',
+            data:data,
+            dataType:'json',
+            type:'post',
+            success:function (data) {
+                alert(data.msg);
+                $('#dg').datagrid('reload');
+            },
+            error:function (data) {
+                alert('兑换成功');
+            }
+        });
+    }
+
+</script>
+
+</html>
